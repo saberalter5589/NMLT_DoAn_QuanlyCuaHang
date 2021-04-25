@@ -33,6 +33,11 @@ namespace ConsoleApp1.Controller
                 Console.ReadLine();
             }
         }
+
+        public static LoaiHang GetDefaultLoaiHang()
+        {
+            return LoaiHangList[0];
+        }
         #endregion
 
         #region Create new Loai hang

@@ -16,13 +16,13 @@ namespace ConsoleApp1.Model
         #endregion Properties
 
         #region Getter and Setter
-        public string MaHang
+        public string MaMatHang
         {
             get { return _maHang; }
             set { _maHang = value; }
         }
 
-        public string TenHang
+        public string TenMatHang
         {
             get { return _tenHang; }
             set { _tenHang = value; }
@@ -57,8 +57,8 @@ namespace ConsoleApp1.Model
         #region Constructors
         public MatHang(string maHang, string tenHang, DateTime hanDung, string congTySanXuat, int namSanXuat, LoaiHang loaiHang)
         {
-            MaHang          = maHang;
-            TenHang         = tenHang;
+            MaMatHang       = maHang;
+            TenMatHang      = tenHang;
             HanDung         = hanDung;
             CongTySanXuat   = congTySanXuat;
             NamSanXuat      = namSanXuat;
