@@ -2,7 +2,7 @@
 using ConsoleApp1.Model;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace ConsoleApp1.Controller
 {
@@ -34,10 +34,6 @@ namespace ConsoleApp1.Controller
             }
         }
 
-        public static LoaiHang GetDefaultLoaiHang()
-        {
-            return LoaiHangList[0];
-        }
         #endregion
 
         #region Create new Loai hang
@@ -46,10 +42,12 @@ namespace ConsoleApp1.Controller
             Console.WriteLine("***** NHẬP LOẠI HÀNG MỚI *****");
 
             // Nhap Ma loai Hang
-            string maLoaiHangInput = InputAndValidate_MaLoaiHang(false);
+            //string maLoaiHangInput = InputAndValidate_MaLoaiHang(false);
+            string maLoaiHangInput = CommonFunctions.InputAndValidate_String(false, LoaiHang.VN_MA_LOAI_HANG, 50, IsMaLoaiHangDuplicated);
 
             // Nhap Ten Loai Hang
-            string tenLoaiHangInput = InputAndValidate_TenloaiHang(false);
+            //string tenLoaiHangInput = InputAndValidate_TenloaiHang(false);
+            string tenLoaiHangInput = CommonFunctions.InputAndValidate_String(false, LoaiHang.VN_TEN_LOAI_HANG, 50);
 
             Console.WriteLine("================= PHẦN XÁC NHẬN THÔNG TIN VỪA NHẬP =================");
 
@@ -75,71 +73,6 @@ namespace ConsoleApp1.Controller
                 Console.WriteLine("Bạn đã từ bỏ các thông tin loại hàng vừa nhập");
                 Console.WriteLine("==================================");
             }        
-        }
-
-        private static string InputAndValidate_MaLoaiHang(bool isEdit)
-        {
-            // Input Ma loai hang
-            Console.WriteLine("==================================");
-            Console.WriteLine("Xin vui lòng nhập vào Mã loại hàng");
-            string userInput = Console.ReadLine().Trim();
-
-            while (true)
-            {
-                if (!isEdit && string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Mã loại hàng không chấp nhận giá trị rỗng, vui lòng nhập lại");
-                    userInput = Console.ReadLine();
-                }
-                else if (userInput.Length > 20)
-                {
-                    Console.WriteLine("Mã loại hàng chỉ chấp nhận chuỗi có độ dài tối đa 20 ký tự, vui lòng nhập lại");
-                    userInput = Console.ReadLine();
-                }
-                else if (IsMaLoaiHangDuplicated(userInput))
-                {
-                    Console.WriteLine("Mã loại hàng này đã tồn tại. Vui lòng nhập lại");
-                    userInput = Console.ReadLine();
-                }
-                // In case all validations is pass
-                else
-                {
-                    Console.WriteLine("Mã loại hàng bạn vừa nhập là {0}", userInput);                   
-                    break;
-                }
-            }
-
-            return userInput;
-        }
-
-        private static string InputAndValidate_TenloaiHang(bool isEdit)
-        {
-            // Input Ten loai hang
-            Console.WriteLine("==================================");
-            Console.WriteLine("Xin vui lòng nhập vào Tên loại hàng");
-            string userInput = Console.ReadLine().Trim();
-
-            while (true)
-            {
-                if (!isEdit && string.IsNullOrWhiteSpace(userInput))
-                {
-                    Console.WriteLine("Tên loại hàng không chấp nhận giá trị rỗng, vui lòng nhập lại");
-                    userInput = Console.ReadLine();
-                }
-                else if (userInput.Length > 50)
-                {
-                    Console.WriteLine("Mã loại hàng chỉ chấp nhận chuỗi có độ dài tối đa 50 ký tự, vui lòng nhập lại");
-                    userInput = Console.ReadLine();
-                }
-                // In case all validations is pass
-                else
-                {
-                    Console.WriteLine("Tên loại hàng bạn vừa nhập là {0}", userInput);
-                    break;
-                }
-            }
-
-            return userInput;
         }
 
         #endregion
@@ -214,6 +147,7 @@ namespace ConsoleApp1.Controller
 
             return resultList;
         }
+
         #endregion
 
         #region Sua loai hang
@@ -221,88 +155,7 @@ namespace ConsoleApp1.Controller
         {
             if (LoaiHangList.Count > 0)
             {
-                while (true)
-                {
-                    Console.WriteLine("========== TÌM KIẾM LOẠI HÀNG ĐỂ CHỈNH SỬA==========");
-                    Console.WriteLine("Xin vui lòng nhập vào Mã Loại hàng để tìm kiếm");
-                    Console.WriteLine("Mã loại hàng: ");
-                    string userInput = Console.ReadLine().Trim();
-                    
-                    if (string.IsNullOrWhiteSpace(userInput))
-                    {
-                        Console.WriteLine("Điều kiện tìm kiếm không được để trống. Xin vui lòng nhập lại");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục.");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-                    var resultList = SearchLoaiHangBasedOnConditions(userInput, null);
-
-                    if (resultList.Count == 0)
-                    {
-                        Console.WriteLine("Không có bất kỳ loại hàng nào đáp ứng với điều kiện được nhập");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                    }
-                    else if (resultList.Count > 1)
-                    {
-                        Console.WriteLine("Có nhiều hơn một loại hàng có mã loại hàng vừa nhập, nên không thể chỉnh sửa.");
-                        Console.WriteLine("Hệ thống chỉ cho phép chỉnh sửa một loại mã hàng có mã loại hàng là duy nhất");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                    }
-                    else if (resultList[0].MaLoaiHang == CommonConstant.MA_LOAI_HANG_DEFAULT)
-                    {
-                        Console.WriteLine("Không thể chỉnh sửa Loại hàng default");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("========== THÔNG TIN LOẠI HÀNG CẦN CHỈNH SỬA ==========");
-                        OutputLoaiHangOnList(resultList);
-                        Console.WriteLine("========== KẾT THÚC THÔNG TIN  LOẠI HÀNG CẦN CHỈNH SỬA ==========");
-                        Console.WriteLine("Sau khi kiểm tra thông tin bên trên, nếu đúng loại hàng cần chỉnh sửa, vui lòng nhấn bất kỳ phím nào để tiến hành chỉnh sửa");
-                        Console.WriteLine("Trong trường hợp không đúng thông tin, vui lòng gõ phím S để kết thúc");
-
-                        userInput = Console.ReadLine();
-
-                        if (userInput.ToLower() != "s")
-                        {
-                            EditLoaiHang(resultList[0]);
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Bạn đã từ bỏ phần chỉnh sửa loại hàng");
-                            Console.WriteLine("==================================");
-                            break;
-                        }
-                    }
-                }         
+                GetOneLoaiHangToAction(EditLoaiHang, CommonConstant.EDIT_TAG);
             }
             else
             {
@@ -317,8 +170,8 @@ namespace ConsoleApp1.Controller
             Console.WriteLine("========== TIẾN HÀNH CHỈNH SỬA LOẠI HÀNG ==========");
             Console.WriteLine("LƯU Ý: Trong trường hợp đối với các thuộc tính mà bạn muốn giữ nguyên giá trị hiện tại, vui lòng bỏ trống và nhấn enter");
             Console.WriteLine("Chỉnh sửa thông tin Mã loại hàng");
-            string maLoaiHangInput = InputAndValidate_MaLoaiHang(true);
-            string tenLoaiHangInput = InputAndValidate_TenloaiHang(true);
+            string maLoaiHangInput = CommonFunctions.InputAndValidate_String(true, LoaiHang.VN_MA_LOAI_HANG, 50, IsMaLoaiHangDuplicated);
+            string tenLoaiHangInput = CommonFunctions.InputAndValidate_String(true, LoaiHang.VN_TEN_LOAI_HANG, 50);
 
             Console.WriteLine("================= PHẦN XÁC NHẬN THÔNG TIN CHỈNH SỬA VỪA NHẬP =================");
 
@@ -364,88 +217,7 @@ namespace ConsoleApp1.Controller
         {
             if (LoaiHangList.Count > 0)
             {
-                while (true)
-                {
-                    Console.WriteLine("========== TÌM KIẾM LOẠI HÀNG ĐỂ XÓA==========");
-                    Console.WriteLine("Xin vui lòng nhập vào Mã Loại hàng để tìm kiếm");
-                    Console.WriteLine("Mã loại hàng: ");
-                    string userInput = Console.ReadLine().Trim();
-
-                    if (string.IsNullOrWhiteSpace(userInput))
-                    {
-                        Console.WriteLine("Điều kiện tìm kiếm không được để trống. Xin vui lòng nhập lại");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-                    var resultList = SearchLoaiHangBasedOnConditions(userInput, null);
-
-                    if (resultList.Count == 0)
-                    {
-                        Console.WriteLine("Không có bất kỳ loại hàng nào đáp ứng với điều kiện được nhập");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                    }
-                    else if (resultList.Count > 1)
-                    {
-                        Console.WriteLine("Có nhiều hơn một loại hàng có mã loại hàng vừa nhập, nên không thể xóa.");
-                        Console.WriteLine("Hệ thống chỉ cho phép xóa một loại mã hàng có mã loại hàng là duy nhất");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                    }
-                    else if (resultList[0].MaLoaiHang == CommonConstant.MA_LOAI_HANG_DEFAULT)
-                    {
-                        Console.WriteLine("Không thể xóa Loại hàng default");
-                        Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
-                        Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
-                        userInput = Console.ReadLine();
-                        if (userInput == "exit")
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("========== THÔNG TIN LOẠI HÀNG CẦN XÓA ==========");
-                        OutputLoaiHangOnList(resultList);
-                        Console.WriteLine("========== KẾT THÚC THÔNG TIN  LOẠI HÀNG CẦN XÓA ==========");
-                        Console.WriteLine("Sau khi kiểm tra thông tin bên trên, nếu đúng loại hàng cần xóa, vui lòng nhấn bất kỳ phím nào để tiến hành xóa");
-                        Console.WriteLine("Trong trường hợp không đúng thông tin, vui lòng gõ phím S để kết thúc");
-
-                        userInput = Console.ReadLine();
-
-                        if (userInput.ToLower() != "s")
-                        {
-                            DeleteLoaiHang(resultList[0]);
-                            break;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Bạn đã từ bỏ phần xóa loại hàng");
-                            Console.WriteLine("==================================");
-                            break;
-                        }
-                    }
-                }              
+                GetOneLoaiHangToAction(DeleteLoaiHang, CommonConstant.DELETE_TAG);
             }
             else
             {
@@ -458,11 +230,110 @@ namespace ConsoleApp1.Controller
         private static void DeleteLoaiHang(LoaiHang loaiHang)
         {
             LoaiHangList.Remove(loaiHang);
+            Console.WriteLine("Bạn đã xóa thành công loại hàng trên");
+            Console.WriteLine("==================================");
         }
         
         #endregion
 
         #region Common functions
+
+        public static string OutputMotLoaiHang(LoaiHang loaiHang)
+        {
+            return String.Format("{0} : {1}, {2} : {3}", LoaiHang.VN_MA_LOAI_HANG, loaiHang.MaLoaiHang, LoaiHang.VN_TEN_LOAI_HANG, loaiHang.TenLoaiHang);
+        }
+
+        public static LoaiHang GetLoaiHangMacDinh()
+        {
+            return LoaiHangList.FindAll(l => l.MaLoaiHang == CommonConstant.MA_LOAI_HANG_DEFAULT).FirstOrDefault();
+        }
+
+        public static LoaiHang GetOneLoaiHangToAction(Action<LoaiHang> action = null, string tag = "")
+        { 
+            while (true)
+            {
+                Console.WriteLine("========== TÌM KIẾM LOẠI HÀNG ĐỂ {0}==========", tag);
+                Console.WriteLine("Xin vui lòng nhập vào Mã Loại hàng để tìm kiếm");
+                Console.WriteLine("Mã loại hàng: ");
+                string userInput = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(userInput))
+                {
+                    Console.WriteLine("Điều kiện tìm kiếm không được để trống. Xin vui lòng nhập lại");
+                    Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
+                    userInput = Console.ReadLine();
+                    if (userInput == "exit")
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                var resultList = SearchLoaiHangBasedOnConditions(userInput, null);
+
+                if (resultList.Count == 0)
+                {
+                    Console.WriteLine("Không có bất kỳ loại hàng nào đáp ứng với điều kiện được nhập");
+                    Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
+                    userInput = Console.ReadLine();
+                    if (userInput == "exit")
+                    {
+                        return null;
+                    }
+                }
+                else if (resultList.Count > 1)
+                {
+                    Console.WriteLine("Có nhiều hơn một loại hàng có mã loại hàng vừa nhập, nên không thể {0}.", tag.ToLower());
+                    Console.WriteLine("Hệ thống chỉ cho phép {0} một loại mã hàng có mã loại hàng là duy nhất", tag.ToLower());
+                    Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
+                    userInput = Console.ReadLine();
+                    if (userInput == "exit")
+                    {
+                        return null;
+                    }
+                }
+                else if (resultList[0].MaLoaiHang == CommonConstant.MA_LOAI_HANG_DEFAULT)
+                {
+                    Console.WriteLine("Không thể {0} Loại hàng default", tag.ToLower());
+                    Console.WriteLine("Nhấn một phím bất kỳ để tiếp tục");
+                    Console.WriteLine("Trong trường hợp muốn thoát khỏi chức năng này, vui lòng gõ chữ exit và nhấn Enter");
+                    userInput = Console.ReadLine();
+                    if (userInput == "exit")
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("========== THÔNG TIN LOẠI HÀNG CẦN {0} ==========", tag);
+                    OutputLoaiHangOnList(resultList);
+                    Console.WriteLine("========== KẾT THÚC THÔNG TIN  LOẠI HÀNG CẦN {0} ==========", tag);
+                    Console.WriteLine("Sau khi kiểm tra thông tin bên trên, nếu đúng loại hàng cần {0}, vui lòng nhấn bất kỳ phím nào để tiến hành {0}", tag.ToLower());
+                    Console.WriteLine("Trong trường hợp không đúng thông tin, vui lòng gõ phím S để kết thúc");
+
+                    userInput = Console.ReadLine();
+
+                    if (userInput.ToLower() != "s")
+                    {
+                        if(action != null)
+                            action.Invoke(resultList[0]);
+                        return resultList[0];
+                    }
+                    else
+                    {
+                        Console.WriteLine("Bạn đã từ bỏ phần {0} loại hàng", tag.ToLower());
+                        Console.WriteLine("==================================");
+                        return null;
+                    }
+                }
+            }
+        }
         
         private static void OutputLoaiHangOnList(List<LoaiHang> targetList)
         {
@@ -472,8 +343,9 @@ namespace ConsoleApp1.Controller
                 var currentLoaiHang = targetList[i];
                 if (currentLoaiHang != null)
                 {
-                    Console.WriteLine("{0}. Mã loại hàng: {1}, Tên loại hàng: {2}",
-                        sothutu, currentLoaiHang.MaLoaiHang, currentLoaiHang.TenLoaiHang);
+                    Console.WriteLine("{0}. {1} : {2}, {3} : {4}",
+                        sothutu, LoaiHang.VN_MA_LOAI_HANG, currentLoaiHang.MaLoaiHang, 
+                        LoaiHang.VN_TEN_LOAI_HANG ,currentLoaiHang.TenLoaiHang);
 
                     sothutu++;
                 }

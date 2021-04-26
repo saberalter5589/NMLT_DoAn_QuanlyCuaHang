@@ -16,6 +16,9 @@ namespace ConsoleApp1.Commons
         public static int HAN_DUNG_NAM = 2021;
         public static string CONG_TY_SAN_XUAT = "Cong ty A";
         public static int NAM_SAN_XUAT = 2019;
-      
+
+        public static string DELETE_TAG = "XÓA";
+        public static string EDIT_TAG = "SỬA";
+        public static string GET_TAG = "LẤY";
     }
 }

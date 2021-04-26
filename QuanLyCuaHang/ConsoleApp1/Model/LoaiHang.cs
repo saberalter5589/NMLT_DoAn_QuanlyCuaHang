@@ -11,6 +11,11 @@ namespace ConsoleApp1.Model
         private string _tenLoaiHang;
         #endregion Properties
 
+        #region Constant
+        public const string VN_MA_LOAI_HANG = "Mã Loại hàng";
+        public const string VN_TEN_LOAI_HANG = "Tên Loại hàng";
+        #endregion
+
         #region Getter and Setter
         public string MaLoaiHang
         {
