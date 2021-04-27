@@ -46,16 +46,16 @@ namespace ConsoleApp1
                             switch (userInput)
                             {
                                 case "1":
-
+                                    MatHangController.ProcessOutputAllCurrentLoaiHang();
                                     break;
                                 case "2":
-
+                                    MatHangController.ProcessSearchMatHang();
                                     break;
                                 case "3":
-
+                                    MatHangController.ProcessCreateMatHang();
                                     break;
                                 case "4":
-
+                                    MatHangController.ProcessEditMatHang();
                                     break;
                                 case "5":
 
