@@ -10,8 +10,10 @@ namespace ConsoleApp1.Controller
     {
         private static List<LoaiHang> LoaiHangList = new List<LoaiHang>(){ 
             new LoaiHang(CommonConstant.MA_LOAI_HANG_DEFAULT, CommonConstant.TEN_LOAI_HANG_DEFAULT),
-            new LoaiHang("LH001", "dAO khu tu"),
-            new LoaiHang("LH002", "dAO khu Bich"),};
+            new LoaiHang("LH001", "Dao Khue Tu"),
+            new LoaiHang("LH002", "Dao Khue Bich"),
+            new LoaiHang("LH003", "Vo Van Phuong Nha"),
+            new LoaiHang("LH004", "Pham Quynh Anh")};
 
         #region Output all Loai hang
         public static void ProcessOutputAllCurrentLoaiHang()
@@ -87,9 +89,9 @@ namespace ConsoleApp1.Controller
                 {
                     Console.WriteLine("========== TÌM KIẾM LOẠI HÀNG ==========");
                     Console.WriteLine("Xin vui lòng nhập vào các điều kiện để tìm kiếm, trong trường hợp không cần điều kiện nào đó thì cứ việc bỏ trống");                  
-                    Console.WriteLine("Mã loại hàng: ");
+                    Console.WriteLine(LoaiHang.VN_MA_LOAI_HANG + ":");
                     string userInput_maLoaiHang = Console.ReadLine().Trim();
-                    Console.WriteLine("Tên loại hàng: ");
+                    Console.WriteLine(LoaiHang.VN_TEN_LOAI_HANG + ":");
                     string userInput_tenLoaiHang = Console.ReadLine().Trim();
 
                     var resultList = SearchLoaiHangBasedOnConditions(userInput_maLoaiHang, userInput_tenLoaiHang);
@@ -122,7 +124,7 @@ namespace ConsoleApp1.Controller
             }
         }
 
-        private static List<LoaiHang> SearchLoaiHangBasedOnConditions(string maLoaiHang, string tenLoaiHang)
+        public static List<LoaiHang> SearchLoaiHangBasedOnConditions(string maLoaiHang, string tenLoaiHang)
         {
             List<LoaiHang> resultList = new List<LoaiHang>();
 
@@ -171,6 +173,7 @@ namespace ConsoleApp1.Controller
             Console.WriteLine("LƯU Ý: Trong trường hợp đối với các thuộc tính mà bạn muốn giữ nguyên giá trị hiện tại, vui lòng bỏ trống và nhấn enter");
             Console.WriteLine("Chỉnh sửa thông tin Mã loại hàng");
             string maLoaiHangInput = CommonFunctions.InputAndValidate_String(true, LoaiHang.VN_MA_LOAI_HANG, 50, IsMaLoaiHangDuplicated);
+            Console.WriteLine("Chỉnh sửa thông tin Tên loại hàng");
             string tenLoaiHangInput = CommonFunctions.InputAndValidate_String(true, LoaiHang.VN_TEN_LOAI_HANG, 50);
 
             Console.WriteLine("================= PHẦN XÁC NHẬN THÔNG TIN CHỈNH SỬA VỪA NHẬP =================");
@@ -229,6 +232,7 @@ namespace ConsoleApp1.Controller
 
         private static void DeleteLoaiHang(LoaiHang loaiHang)
         {
+            //TODO: KO CHO DELETE LOAI HANG DANG DC SU DUNG BOI BAT KY 1 MAT HANG NAO
             LoaiHangList.Remove(loaiHang);
             Console.WriteLine("Bạn đã xóa thành công loại hàng trên");
             Console.WriteLine("==================================");
@@ -248,7 +252,7 @@ namespace ConsoleApp1.Controller
             return LoaiHangList.FindAll(l => l.MaLoaiHang == CommonConstant.MA_LOAI_HANG_DEFAULT).FirstOrDefault();
         }
 
-        public static LoaiHang GetOneLoaiHangToAction(Action<LoaiHang> action = null, string tag = "")
+        public static LoaiHang GetOneLoaiHangToAction(Action<LoaiHang> action = null, string tag = "", bool isGetForMatHangLogic = false)
         { 
             while (true)
             {
@@ -256,6 +260,11 @@ namespace ConsoleApp1.Controller
                 Console.WriteLine("Xin vui lòng nhập vào Mã Loại hàng để tìm kiếm");
                 Console.WriteLine("Mã loại hàng: ");
                 string userInput = Console.ReadLine().Trim();
+
+                if (isGetForMatHangLogic == true && string.IsNullOrEmpty(userInput))
+                {
+                    return null;
+                }
 
                 if (string.IsNullOrWhiteSpace(userInput))
                 {

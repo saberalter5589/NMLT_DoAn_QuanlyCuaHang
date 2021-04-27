@@ -41,7 +41,7 @@ namespace ConsoleApp1.Commons
             return userInput;
         }
 
-        public static DateTime InputAndValidate_DateTime(string kindName)
+        public static DateTime InputAndValidate_DateTime(bool isEdit, string kindName)
         {
             // Input and check day
             while (true)
@@ -49,24 +49,37 @@ namespace ConsoleApp1.Commons
                 Console.WriteLine("==================================");
                 Console.WriteLine("Xin vui lòng nhập ngày tháng năm của {0}", kindName);
                 string userInput = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(userInput) && isEdit)
+                {
+                    return DateTime.MinValue;
+                }
+
                 DateTime inputDayTime = IsDayTimeValid(userInput);
                 if (inputDayTime != DateTime.MinValue)
                 {
-                    Console.WriteLine("Bạn vừa nhập ngày tháng năm của {0} là {1}/{2}/{3}", 
+                    Console.WriteLine("Bạn vừa nhập ngày tháng năm của {0} là {1}/{2}/{3}",
                         kindName, inputDayTime.Day, inputDayTime.Month, inputDayTime.Year);
                     return inputDayTime;
                 }
             }
         }
 
-        public static int InputAndValidate_Year(string kindName)
+        public static int InputAndValidate_Year(bool isEdit, string kindName)
         {
             while (true)
             {
                 Console.WriteLine("==================================");
                 Console.WriteLine("Xin vui lòng nhập năm của {0}", kindName);
                 string userInput = Console.ReadLine().Trim();
+
+                if (string.IsNullOrWhiteSpace(userInput) && isEdit)
+                {
+                    return -1;
+                }
+
                 int inputYear = IsYearValid(userInput);
+
                 if (inputYear > 0)
                 {
                     Console.WriteLine("Bạn vừa nhập năm của {0} là {1}",
@@ -111,7 +124,6 @@ namespace ConsoleApp1.Commons
                 return DateTime.MinValue;
             }
 
-     
         }
 
         public static int IsDayValid(string day) 
